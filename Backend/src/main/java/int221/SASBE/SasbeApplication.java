@@ -1,5 +1,6 @@
 package int221.SASBE;
 
+import int221.SASBE.config.JwtTokenUtil;
 import int221.SASBE.properties.JwtProperties;
 import int221.SASBE.repository.CustomRepositoryImpl;
 import org.springframework.boot.SpringApplication;
@@ -15,6 +16,7 @@ public class SasbeApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SasbeApplication.class, args);
+
 	}
 
 }

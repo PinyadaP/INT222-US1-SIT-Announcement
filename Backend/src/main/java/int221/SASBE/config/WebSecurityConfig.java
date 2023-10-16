@@ -18,8 +18,10 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class WebSecurityConfig {
     @Autowired
     private JwtRequestFilter jwtRequestFilter;
-    private final AuthenticationConfiguration authenticationConfiguration;
 
+    @Autowired
+    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final AuthenticationConfiguration authenticationConfiguration;
 
     @Bean
     public AuthenticationManager authenticationManager() throws Exception{
@@ -28,15 +30,16 @@ public class WebSecurityConfig {
 
     @Bean
     public DefaultSecurityFilterChain Configure(HttpSecurity http) throws Exception {
-        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-
-        http.csrf(csrf->csrf.disable())
+        http
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
+                .csrf(csrf->csrf.disable())
                 .authorizeHttpRequests(
                         (request) ->request
                                 .requestMatchers("/api/token","/api/announcements").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .httpBasic(withDefaults());
+
         return http.build();
 
 

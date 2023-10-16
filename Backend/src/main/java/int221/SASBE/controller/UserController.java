@@ -1,5 +1,6 @@
 package int221.SASBE.controller;
 
+import int221.SASBE.config.JwtTokenUtil;
 import int221.SASBE.dto.MatchPasswordDTO;
 import int221.SASBE.dto.SimpleUserPostDTO;
 import int221.SASBE.dto.SimpleUserPutDTO;
@@ -14,27 +15,24 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = {"http://localhost", "http://intproj22.sit.kmutt.ac.th"})
+//@CrossOrigin(origins = {"http://localhost", "http://intproj22.sit.kmutt.ac.th"})
 
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
     @Autowired
     private UserService userService;
-@Autowired
-private ModelMapper modelMapper;
-//    @GetMapping("")
-//    @ResponseStatus(HttpStatus.OK)
-//    public List<User> getUsers() {
-//        return userService.getUsers();
-//    }
+    @Autowired
+    private ModelMapper modelMapper;
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+
 
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
     public List<UserPostResDTO> getUsers() {
         return userService.getUsers();
     }
-
 
     @GetMapping("/{ID}")
     public User getUserById(@PathVariable Integer ID) {

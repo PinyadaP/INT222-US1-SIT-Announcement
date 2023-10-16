@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@CrossOrigin(origins = {"http://localhost", "http://intproj22.sit.kmutt.ac.th"})
+//@CrossOrigin(origins = {"http://localhost", "http://intproj22.sit.kmutt.ac.th"})
 //@CrossOrigin(origins = "http://localhost")
 //@CrossOrigin(origins = "http://ip22us1.sit.kmutt.ac.th")
 //@CrossOrigin(origins = "*")
