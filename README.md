@@ -3,10 +3,10 @@ This is my Project in INT222 subject. I have been working on the backend so this
 
 [My website : SIT Announcement](https://intproj22.sit.kmutt.ac.th/us1/login)
 
-Login For Admin Role
-Username : sanit
+### Login For Admin Role
+Username : sanit \
 Password : Sasadmin22*
 
-Login For Annoucer Role
-Username : vichchuda
+### Login For Annoucer Role 
+Username : vichchuda \
 Password : Sasbscit22*
