@@ -27,6 +27,13 @@ public class Announcement {
     private ZonedDateTime closeDate;
     @Column(name = "announcementDisplay", nullable = false)
     private String announcementDisplay;
+
+
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "users_ID")
+    private User user;
+
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "categories_categoryId")

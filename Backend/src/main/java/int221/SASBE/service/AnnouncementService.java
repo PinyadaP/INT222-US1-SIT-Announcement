@@ -3,34 +3,76 @@ package int221.SASBE.service;
 import int221.SASBE.dto.SimpleAnnouncementResDTO;
 import int221.SASBE.entities.Announcement;
 import int221.SASBE.entities.Category;
+import int221.SASBE.entities.CustomUserDetails;
+import int221.SASBE.entities.User;
 import int221.SASBE.repository.AnnouncementRepository;
 import int221.SASBE.repository.CategoryRepository;
+import int221.SASBE.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
-
 public class AnnouncementService {
     @Autowired
     private AnnouncementRepository announcementRepository;
     @Autowired
     private CategoryRepository categoryRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     public List<Announcement> getAnnouncements() {
         Sort sort = Sort.by(Sort.Direction.DESC, "announcementId");
         return announcementRepository.findAll(sort);
     }
 
+
+    public List<Announcement> getAnnouncementbyUserID(int userid){
+        List<Announcement> AllAnnouncement = getAnnouncements();
+        List<Announcement> filteredByUserID = new ArrayList<>();
+        for (Announcement announcement : AllAnnouncement) {
+            if (announcement.getUser().getID() == Integer.parseInt(String.valueOf(userid))) {
+                filteredByUserID.add(announcement);
+            }
+        }
+        return filteredByUserID;
+    }
+
+
     public Announcement getAnnouncementById(Integer announcementId) {
-        return announcementRepository.findById(announcementId).orElseThrow(()
-                -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Announcement id" + announcementId + "does not exist !!!"));
+        Announcement announcement = announcementRepository.findByIdWithUser(announcementId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Announcement id " + announcementId + " does not exist !!!"));
+
+        String currentUserID = getCurrentUserId();
+        if (isAnnouncer()){
+            if (announcement.getUser().getID() != Integer.valueOf(currentUserID)) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to access this announcement.");
+            }
+
+        }
+        return announcement;
+    }
+
+    private String getCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
+            return ((CustomUserDetails) authentication.getPrincipal()).getUserId();
+        }
+        return null;
+    }
+
+    private boolean isAnnouncer() {
+        return SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+                .anyMatch(role -> role.getAuthority().equals("ROLE_ANNOUNCER"));
     }
 
 
@@ -49,6 +91,12 @@ public class AnnouncementService {
         List<Announcement> announcements = announcementRepository.findAnnouncement();
         Announcement lastAnnouncement = announcements.isEmpty() ? null : announcements.get(0);
         announcement.setAnnouncementId(lastAnnouncement.getAnnouncementId() + 1);
+
+        String userId = getCurrentUserId();
+        User user = userRepository.findById(Integer.parseInt(userId)).orElseThrow(()
+                -> new RuntimeException("User ID: " + userId + " does not exist"));
+        announcement.setUser(user);
+        System.out.println("user:"+userId);
         return announcementRepository.saveAndFlush(announcement);
     }
     //***ใช้
@@ -72,6 +120,7 @@ public class AnnouncementService {
         Category category = categoryRepository.findById(announcementResPutDTO.getCategoryId())
                 .orElseThrow(() -> new RuntimeException("Category ID: " + announcementResPutDTO.getCategoryId() + " does not exist"));
         announcement.setCategory(category);
+
         return announcementRepository.saveAndFlush(announcement);
     }
 
@@ -127,6 +176,7 @@ public class AnnouncementService {
             throw new RuntimeException("Mode NOT_FOUND");
         }
     }
+
 }
 
 

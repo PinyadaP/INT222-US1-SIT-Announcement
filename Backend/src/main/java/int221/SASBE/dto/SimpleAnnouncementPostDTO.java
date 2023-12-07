@@ -1,5 +1,6 @@
 package int221.SASBE.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.JoinColumn;
 import lombok.Getter;
@@ -18,4 +19,9 @@ public class SimpleAnnouncementPostDTO {
     private ZonedDateTime closeDate;
     private String announcementDisplay;
     private String announcementCategory;
+    @JsonIgnore
+    private String userUsername;
+    public String getAnnouncementOwner(){
+        return this.userUsername;
+    }
 }

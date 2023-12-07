@@ -3,6 +3,8 @@ package int221.SASBE.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class TokenPair {
@@ -13,5 +15,6 @@ public class TokenPair {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
     }
+
 
 }

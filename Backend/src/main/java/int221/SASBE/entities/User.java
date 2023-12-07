@@ -8,6 +8,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.validator.constraints.UniqueElements;
 
 import java.time.ZonedDateTime;
+import java.util.Collection;
 
 @Getter
 @Setter
@@ -32,4 +33,6 @@ public class User {
     private ZonedDateTime createdOn;
     @Column(name = "updatedOn",insertable = false,updatable = false)
     private ZonedDateTime updatedOn;
+
+
 }

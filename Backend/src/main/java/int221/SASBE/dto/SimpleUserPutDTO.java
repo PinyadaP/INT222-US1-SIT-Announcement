@@ -16,22 +16,10 @@ import java.time.ZonedDateTime;
 public class SimpleUserPutDTO {
 
     private Integer ID;
-    @UniqueUsername
-    @NotBlank(message = "must not be blank")
-    @Size(min = 1,max = 45, message = "size must be between 1 and 45")
     private String username;
-    @UniqueName
-    @NotBlank(message = "must not be blank")
-    @Size(min = 1,max = 100, message = "size must be between 1 and 100")
     private String name;
-    @Size(min = 1,max = 150, message = "size must be between 1 and 150")
-    @NotBlank
-    @UniqueEmail
-    @Email
     private String email;
     private String role;
-    @Column(name = "createdOn",insertable = false,updatable = false)
     private ZonedDateTime createdOn;
-    @Column(name = "updatedOn",insertable = false,updatable = false)
     private ZonedDateTime updatedOn;
 }

@@ -18,5 +18,6 @@ public class SimpleAnnouncementIdDTO {
     private String announcementDisplay;
     @Column(name = "categoryName", nullable = false)
     private String announcementCategory;
-
+    @Column(name = "username", nullable = false)
+    private String announcementOwner;
 }

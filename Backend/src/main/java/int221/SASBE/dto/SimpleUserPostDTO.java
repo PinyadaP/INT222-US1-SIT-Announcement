@@ -12,7 +12,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.ZonedDateTime;
+
 @Getter
 @Setter
 public class SimpleUserPostDTO {
@@ -22,7 +22,7 @@ public class SimpleUserPostDTO {
     private String username;
     @NotBlank(message = "must not be blank")
     @ValidPassword
-    @Size(min = 1,max = 100, message = "{size must be between 8 and 14}")
+    @Size(min = 8,max = 14, message = "{size must be between 8 and 14}")
     private String password;
     @NotBlank(message = "must not be blank")
     @Size(min = 1,max = 100, message = "size must be between 1 and 100")

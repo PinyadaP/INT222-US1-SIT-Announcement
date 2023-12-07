@@ -1,11 +1,10 @@
 package int221.SASBE.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import int221.SASBE.entities.User;
 import jakarta.persistence.Column;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.sql.Date;
 import java.time.ZonedDateTime;
 
 @Getter
@@ -19,5 +18,5 @@ public class SimpleAnnouncementDTO {
     private String announcementDisplay;
     @Column(name = "categoryName", nullable = false)
     private String announcementCategory;
-
+    private String announcementOwner;
 }

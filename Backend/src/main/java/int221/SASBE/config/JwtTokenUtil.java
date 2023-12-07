@@ -1,19 +1,23 @@
 package int221.SASBE.config;
 
 import int221.SASBE.dto.TokenPair;
+import int221.SASBE.entities.CustomUserDetails;
 import int221.SASBE.properties.JwtProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtTokenUtil implements Serializable {
@@ -46,18 +50,33 @@ public class JwtTokenUtil implements Serializable {
     }
 
 
-    public TokenPair generateTokens(UserDetails userDetails) {
+    public Map<String,String> generateTokens(UserDetails userDetails) {
         Date now = new Date();
+        Map<String,Object> claims = new HashMap<>();
         Date accessTokenExpiration = new Date(now.getTime() + jwtProperties.getAccessToken() * 60 * 1000);
         Date refreshTokenExpiration = new Date(now.getTime() + jwtProperties.getRefreshToken() * 60 * 1000);
 
-        String accessToken = doGenerateToken(userDetails.getUsername(), accessTokenExpiration);
-        String refreshToken = doGenerateToken(userDetails.getUsername(), refreshTokenExpiration);
+        List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
 
-        return new TokenPair(accessToken, refreshToken);
+        String userId = null;
+        if (userDetails instanceof CustomUserDetails) {
+            userId = ((CustomUserDetails) userDetails).getUserId();
+            claims.put("userId",userId);
+        }
+        claims.put("roles",roles);
+
+//        String accessToken = doGenerateToken(claims,userDetails.getUsername(), accessTokenExpiration);
+//        String refreshToken = doGenerateToken(claims,userDetails.getUsername(), refreshTokenExpiration);
+
+
+       claims.put("access_token",doGenerateToken(claims,userDetails.getUsername(), accessTokenExpiration));
+       claims.put("refresh_token",doGenerateToken(claims,userDetails.getUsername(), refreshTokenExpiration));
+       Map<String,String> tokens = new HashMap<>();
+       tokens.put("access_token", (String) claims.get("access_token"));
+       tokens.put("refresh_token", (String) claims.get("refresh_token"));
+       return tokens;
     }
-    private String doGenerateToken(String subject, Date expiration) {
-        Map<String, Object> claims = new HashMap<>();
+    private String doGenerateToken(Map<String,Object> claims,String subject, Date expiration) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(subject)
@@ -72,5 +91,7 @@ public class JwtTokenUtil implements Serializable {
         final String username = getUsernameFromToken(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
+
+    /////////////
 
 }

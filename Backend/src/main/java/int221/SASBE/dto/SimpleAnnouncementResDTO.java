@@ -1,5 +1,6 @@
 package int221.SASBE.dto;
 
+import jakarta.persistence.Column;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,5 +15,6 @@ public class SimpleAnnouncementResDTO {
     private ZonedDateTime closeDate;
     private String announcementDisplay;
     private Integer categoryId;
+    private Integer ID;
 
 }

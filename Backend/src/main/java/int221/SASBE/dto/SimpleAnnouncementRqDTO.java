@@ -1,5 +1,7 @@
 package int221.SASBE.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.Column;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,4 +16,12 @@ public class SimpleAnnouncementRqDTO {
     private ZonedDateTime closeDate;
     private String announcementDisplay;
     private String announcementCategory;
+//    @Column(name = "username", nullable = false)
+//    private String announcementOwner;
+@JsonIgnore
+private String userUsername;
+    public String getAnnouncementOwner(){
+        return this.userUsername;
+    }
+
 }

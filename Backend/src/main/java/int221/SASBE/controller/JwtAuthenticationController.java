@@ -22,6 +22,8 @@ import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Map;
+
 @RestController
 @CrossOrigin
 @RequestMapping("/api/token")
@@ -36,38 +38,19 @@ public class JwtAuthenticationController {
     @Autowired
     private UserRepository userRepository;
 
-//    @ResponseStatus(HttpStatus.OK)
-//    @GetMapping(value = "")
-//    public ResponseEntity<?>refreshAuthenticationToken(@RequestParam("accessToken") String accessToken, @RequestParam("refreshToken")String refreshToken){
-//        if(jwtTokenUtil.isTokenExpired(accessToken)){
-//            if(jwtTokenUtil.isTokenExpired(refreshToken)){
-//                String username = jwtTokenUtil.getUsernameFromToken(refreshToken);
-//                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-////                UserDetails userDetails = userDetailsService.loadUserByUsername(jwtTokenUtil.getUsernameFromToken(accessToken));
-//
-//                TokenPair tokenPair = jwtTokenUtil.generateTokens(userDetails);
-//                JwtResponse response = new JwtResponse();
-//                response.setToken(tokenPair.getAccessToken());
-//                response.setRefreshToken(tokenPair.getRefreshToken());
-//                return ResponseEntity.status(HttpStatus.OK).body(response);
-//            }else{
-//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired refresh token");
-//            }
-//        }else {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Access token is still valid");
-//        }
-//    }
 
     @GetMapping(value = "")
     public ResponseEntity<?> extractRefreshTokenFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         String refreshToken = bearerToken.substring(7);
         String username = jwtTokenUtil.getUsernameFromToken(refreshToken);
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-//        final UserDetails userDetails = userDetailsService.loadUserByUsername(jwtTokenUtil.getUsernameFromToken(refreshToken));
-         TokenPair token = jwtTokenUtil.generateTokens(userDetails);
+//        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(jwtTokenUtil.getUsernameFromToken(refreshToken));
+//         TokenPair token = jwtTokenUtil.generateTokens(userDetails);
+        Map<String,String> tokens = jwtTokenUtil.generateTokens(userDetails);
+
         DTOToken response = new DTOToken();
-        response.setToken(token.getAccessToken());
+        response.setToken(tokens.get("access_token"));
 //        response.setRefreshToken(token.getRefreshToken());
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -89,11 +72,14 @@ public class JwtAuthenticationController {
         }
         try {
             final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
-            final TokenPair token = jwtTokenUtil.generateTokens(userDetails);
-            JwtResponse response = new JwtResponse();
-            response.setToken(token.getAccessToken());
-            response.setRefreshToken(token.getRefreshToken());
-            return ResponseEntity.status(HttpStatus.OK).body(response);
+//            final TokenPair token = jwtTokenUtil.generateTokens(userDetails);
+//            JwtResponse response = new JwtResponse();
+//            response.setToken(token.getAccessToken());
+//            response.setRefreshToken(token.getRefreshToken());
+//            return ResponseEntity.status(HttpStatus.OK).body(response);
+            Map<String,String> tokens = jwtTokenUtil.generateTokens(userDetails);
+            JwtResponse jwtResponse = new JwtResponse(tokens.get("access_token"),tokens.get("refresh_token"));
+            return ResponseEntity.status(HttpStatus.OK).body(jwtResponse);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
